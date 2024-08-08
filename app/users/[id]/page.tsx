@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useFetch } from '@/hooks/useFetch';
 
 interface User {
     id: number;
@@ -10,20 +11,24 @@ interface User {
 
 const UserDetails: React.FC = () => {
     const { id } = useParams(); // Pega o parâmetro "id" da URL
-    const [data, setData] = useState<User | null>(null);
+    const { data } = useFetch<User>(`users/${id}`);
 
-    useEffect(() => {
-        if (id) {
-            fetch(`http://localhost:3333/users/${id}`).then(response => {
-                response.json().then(user => {
-                    setData(user);
-                });
-            });
-        }
-    }, [id]);
+    if (!data) {
+        return <p>Carregando...</p>
+    }
+
+    // useEffect(() => {
+    //     if (id) {
+    //         fetch(`http://localhost:3333/users/${id}`).then(response => {
+    //             response.json().then(user => {
+    //                 setData(user);
+    //             });
+    //         });
+    //     }
+    // }, [id]);
 
     return (
-        <ul>
+        <ul className="text-blue-500">
             <li>ID: {data?.id}</li>
             <li>Name: {data?.name}</li>
         </ul>
